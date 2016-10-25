@@ -7,7 +7,7 @@ This plugin enables you to preview the files attached to issues in Redmine. The 
 
 ## Compatibility
 
-This plugin version is compatible only with Redmine 2.1.x and later.
+This plugin version is compatible only with Redmine 3.x and later.
 
 ## Installation
 
@@ -22,12 +22,19 @@ This plugin version is compatible only with Redmine 2.1.x and later.
             
       Copy the plugin from GitHub using the following commands:
       
-            git clone https://github.com/Restream/notify_custom_users.git plugins/notify_custom_users
+            git clone https://github.com/Restream/redmine_lightbox.git plugins/redmine_lightbox
             
-2. Install the required dependencies using the command:
+2. Install the required dependencies 
+
+   On Debian Linux:
 
         sudo apt-get install libreoffice-common unoconv
-
+  
+   On MacOS: 
+        
+        brew install unoconv --HEAD
+        
+   Note: In order to use unoconv on MacOS, a copy of LibreOffice between versions 3.6.0.1 - 4.3.x must be installed.
 
 3. Install the required gems using the command:  
 
@@ -41,11 +48,17 @@ This plugin version is compatible only with Redmine 2.1.x and later.
 
 ## Usage
 
-The plugins adds an **eye** icon next to issue attachments that can be previewed.  
-![preview icon](doc/lightbox_1.PNG)
+The plugins adds an 🔎  icon next to issue attachments that can be previewed.  
+![preview icon](doc/screenshot-issue.png)
 
 Clicking the icon opens a pop-up window where you can preview the attachment. If there are several files attached to the issue, you can proceed to the next attachment by clicking the arrow button.
-![preview pop-up](doc/lightbox_2.PNG)
+![preview pop-up](doc/screenshot-docx.png)
+
+You can view ordinary images:
+![preview pop-up-image](doc/screenshot-image.png)
+
+Text files also can be previewed:
+![preview pop-up-text](doc/screenshot-text.png)
 
 ## Author
 

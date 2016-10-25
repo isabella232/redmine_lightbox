@@ -19,11 +19,15 @@ module RedmineLightbox
       end
 
       def pdf_preview
-        preview = @attachment.pdf_preview
-        send_file preview.diskfile,
-          filename:    filename_for_content_disposition(preview.filename),
-          type:        'application/pdf',
-          disposition: 'inline'
+        if @attachment.has_pdf_preview?
+          preview = @attachment.pdf_preview
+          send_file preview.diskfile,
+            filename:    filename_for_content_disposition(preview.filename),
+            type:        'application/pdf',
+            disposition: 'inline'
+        else
+          render :nothing
+        end
       end
 
       private

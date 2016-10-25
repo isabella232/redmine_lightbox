@@ -10,7 +10,7 @@ module RedmineLightbox
 
         def convert(filename, output_format)
           target_filename = preview_filename_for(filename, output_format)
-          if filename.present? && File.exist?(filename) && !File.exists?(target_filename)
+          if filename.present? && File.exist?(filename) && !File.exist?(target_filename)
             `cp #{filename} #{target_filename}`
           end
         end
@@ -30,6 +30,16 @@ class ActiveSupport::TestCase
     path = File.expand_path(File.dirname(__FILE__) + '/fixtures/files')
     path << '/' unless path.end_with?('/')
     path
+  end
+
+  def create_text_attachment
+    self.class.fixture_path = LIGHTBOX_SAMPLES_PATH
+    filename                = 'test_text.txt'
+    file                    = fixture_file_upload(filename)
+    Attachment.create!(
+      file:     file,
+      author:   User.find(2),
+      filename: filename)
   end
 
   def create_document_attachment

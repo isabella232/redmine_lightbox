@@ -10,36 +10,41 @@ class RedmineLightbox::AttachmentTest < ActiveSupport::TestCase
 
   def test_transformed_preview_should_not_generate_the_preview_for_jpg
     attachment = Attachment.find(16)
-    attachment.attachment_preview.try(:destroy)
-    attachment.attachment_preview = nil
-    attachment.save!
-    preview = attachment.transformed_preview
-    assert_nil preview
+
+    # Ensure that no pdf preview exist before test
+    refute attachment.has_pdf_preview?
+
+    # Trying to generate preview
+    attachment.generate_pdf_preview
+    attachment.reload
+
+    refute attachment.has_pdf_preview?
   end
 
-  def test_transformed_preview_should_generate_the_preview_for_rtf
+  def test_manual_generate_pdf_preview
     attachment = create_document_attachment
-    attachment.attachment_preview.try(:destroy)
-    attachment.attachment_preview = nil
-    attachment.save!
 
-    preview = attachment.transformed_preview
-    assert preview
-    assert attachment.has_transformed_preview?
-    assert File.exists?(preview.diskfile)
+    # Delete automatically generated preview
+    attachment.pdf_preview.try(:destroy)
+    attachment.reload
+
+    # Ensure that no pdf preview exist before test
+    refute attachment.has_pdf_preview?
+
+    # Trying to generate preview
+    attachment.generate_pdf_preview
+    attachment.reload
+
+    assert attachment.has_pdf_preview?
   end
 
-  def test_has_preview_with_attachment_preview
+  def test_pdf_preview_generates_automatically
     attachment = create_document_attachment
-    preview = attachment.transformed_preview
-    assert preview
-    assert attachment.has_transformed_preview?
+    assert attachment.has_pdf_preview?
   end
 
-  def test_has_preview_without_attachment_preview
-    attachment = Attachment.find(16)
-    preview = attachment.transformed_preview
-    assert_nil preview
-    refute attachment.has_transformed_preview?
+  def test_text_attachment_do_not_generate_pdf_preview
+    attachment = create_text_attachment
+    refute attachment.has_pdf_preview?
   end
 end

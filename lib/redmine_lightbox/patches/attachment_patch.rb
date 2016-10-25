@@ -6,31 +6,29 @@ module RedmineLightbox
       extend ActiveSupport::Concern
 
       included do
-        PDF_PREVIEW_ALLOWED_FOR = %w(doc docx rtf)
-
-        has_one :pdf_preview, -> { where(file_type: 'pdf') }, class_name: 'AttachmentPreview', dependent: :destroy
+        has_one :pdf_preview, dependent: :destroy
 
         after_save :generate_pdf_preview
       end
 
       def has_pdf_preview?
-        pdf_preview && pdf_preview.file_exists?
+        pdf_preview && pdf_preview.file_exist?
       end
 
-      def generate_pdf_preview( force = false )
-        return unless convertible_to_pdf?
-
-        return if has_pdf_preview? && !force
-
-        if pdf_preview
-          pdf_preview.create_preview
-        else
-          create_pdf_preview(file_type: 'pdf')
-        end
+      def generate_pdf_preview(force = false)
+        PdfPreview.generate_for self, force
       end
 
       def convertible_to_pdf?
-        PDF_PREVIEW_ALLOWED_FOR.include? filename.rpartition('.')[2].downcase
+        PdfPreview.can_generate_from? self
+      end
+
+      def is_image?
+        Redmine::MimeType.is_type?('image', filename)
+      end
+
+      def is_pdf?
+        Redmine::MimeType.of(filename) == 'application/pdf'
       end
 
     end
